@@ -9,12 +9,12 @@
 		<script src="https://code.jquery.com/jquery.min.js"></script>
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-		
+
 
 		<style type="text/css">
 			html, body {
     			height: 100%;
-			}	
+			}
 			.backpage {
 				width: 100%;
 				height: 100%;
@@ -79,7 +79,7 @@
 		var num_to_take;
 		var is_over = false;
 		var is_man_turn = true;
-		
+
 		//set array
 		var num_of_stones = new Array(3);
 		for (i = 0; i < 3; i++)
@@ -88,7 +88,7 @@
 		}
 
 
-		function start_button_Click() 
+		function start_button_Click()
 		{
 			//clear button
 			document.querySelector("#bye").innerHTML = "<a class = \"btn btn-danger\" onClick = \"restart();\">重新開始</a>";
@@ -132,8 +132,8 @@
 			{
 				stone_object[i].innerHTML = "";
 				for (k = 0; k < (2 * i) + 3; k ++)
-					stone_object[i].innerHTML += "<img id = \"stone" + i + k + "\" class = 'img-stone' src = 'kk.png' width = 10% height = 10% style = 'background-color: #87CEEB;' onClick = \"delete_img(this.id);\">";
-			}		
+					stone_object[i].innerHTML += "<img id = \"stone" + i + k + "\" class = 'img-stone' src = 'stone.png' width = 10% height = 10% style = 'background-color: #87CEEB;' onClick = \"delete_img(this.id);\">";
+			}
 		}
 
 		//on mouse
@@ -171,7 +171,7 @@
 			{
 				var title_object = document.querySelector("#title_word");
 
-				//reset 
+				//reset
 				first_click = true;
 				row_clicked = 4;
 
@@ -206,7 +206,7 @@
 			{
 				make it in win position
 			}
-			
+
 			clear stones
 
 			if (special case)
@@ -221,7 +221,7 @@
 				get_computer_move();
 				//fix_seven();
 			}
-			
+
 			var deleted = 0;
 			var stone_now = document.getElementsByTagName("img");
 
@@ -232,14 +232,14 @@
 				case 0:
 					for (i = 0; i < 3 && deleted != num_to_take; i++)
 					{
-						
+
 						if (stone_now[i].style.visibility == "hidden")
 							continue;
 						else
 						{
 							stone_now[i].style.visibility = "hidden";
 							deleted ++;
-						}	
+						}
 					}
 					break;
 				case 1:
@@ -251,7 +251,7 @@
 						{
 							stone_now[i].style.visibility = "hidden";
 							deleted ++;
-						}	
+						}
 					}
 					break;
 				case 2:
@@ -263,11 +263,11 @@
 						{
 							stone_now[i].style.visibility = "hidden";
 							deleted ++;
-						}	
+						}
 					}
 					break;
 			}
-			
+
 		}
 
 		//do XOR
@@ -293,7 +293,7 @@
 			{
 				row_to_take = Math.floor(Math.random() * 3);
 			}while(num_of_stones[row_to_take] == 0);
-			
+
 
 			//can't take more if it has only one stone left
 			do
@@ -305,7 +305,7 @@
 			num_of_stones[row_to_take] -= num_to_take;
 		}
 
-		
+
 		function get_computer_move()
 		{
 			answer_get = false;
@@ -354,7 +354,7 @@
 						row_to_take = i;
 						num_to_take = k;
 						answer_get = true;
-					}			
+					}
 
 				}
 			}
