@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset = "utf-8">
+		<title>挑石頭遊戲</title>
+
+		<!-- using BOOTSTRAP -->
+		<script src="https://code.jquery.com/jquery.min.js"></script>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		
+
+		<style type="text/css">
+			html, body {
+    			height: 100%;
+			}	
+			.backpage {
+				width: 100%;
+				height: 100%;
+				background-color: #87CEEB;
+				display: table;
+			}
+			.text-place {
+				display: table-cell;
+				vertical-align: middle;
+				text-align: center;
+			}
+			.img-stone {
+				margin: 10px;
+			}
+			#bye {
+				margin: 10px;
+			}
+			.well {
+				background-color: #F0E68C;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class = "container backpage">
+			<div class = "text-place">
+				<div id = "stones">
+					<h1 id = "title_word">挑石頭遊戲</h1>
+				</div>
+				<div id = "stone"></div>
+				<div id = "stone"></div>
+				<div id = "stone"></div>
+				<div id = "button">
+					<a class = "btn btn-success" onClick = "start_button_Click();">點我開始</a>
+				</div>
+				<div id = "bye">
+					<a class = "btn btn-danger" data-toggle= "collapse" href= "#rule" aria-expanded= "false" aria-controls= "rule">規則</a>
+				</div>
+				<div class = "collapse" id = "rule">
+  					<div class = "well">
+  						<p>
+  							有三堆石頭，每次可以任選一堆拿走任意數量的石頭，但只能選一堆，且每次至少拿一顆，最後拿走最後一顆的人就輸了！！
+  						</p>
+ 					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+	</body>
+
+	<script type="text/javascript">
+
+		var i = 0, k = 0;
+		var row_clicked;
+		var first_click = true;
+		var stones_left = 15;
+		var is_win_position = false;
+		var row_to_take;
+		var num_to_take;
+		var is_over = false;
+		var is_man_turn = true;
+		
+		//set array
+		var num_of_stones = new Array(3);
+		for (i = 0; i < 3; i++)
+		{
+			num_of_stones[i] =  2 * i + 3;
+		}
+
+
+		function start_button_Click() 
+		{
+			//clear button
+			document.querySelector("#bye").innerHTML = "<a class = \"btn btn-danger\" onClick = \"restart();\">重新開始</a>";
+
+			//set button
+			document.querySelector("#button").innerHTML = "<a class = 'btn btn-success' onClick = \"confirm_click();\">換電腦動</a>";
+
+			//hide rule
+			$('#rule').collapse('hide');
+
+			create_stone();
+		}
+
+		function restart()
+		{
+			create_stone();
+
+			document.querySelector("#title_word").innerHTML = "挑石頭遊戲";
+
+			first_click = true;
+			stones_left = 15;
+			is_win_position = false;
+			is_over = false;
+			is_man_turn = true;
+
+			//set array
+			num_of_stones = new Array(3);
+			for (i = 0; i < 3; i++)
+			{
+				num_of_stones[i] =  2 * i + 3;
+			}
+
+			console.log(num_of_stones);
+		}
+
+		function create_stone()
+		{
+			//create stones
+			var stone_object = document.querySelectorAll("#stone");
+			for (i = 0; i < 3; i++)
+			{
+				stone_object[i].innerHTML = "";
+				for (k = 0; k < (2 * i) + 3; k ++)
+					stone_object[i].innerHTML += "<img id = \"stone" + i + k + "\" class = 'img-stone' src = 'kk.png' width = 10% height = 10% style = 'background-color: #87CEEB;' onClick = \"delete_img(this.id);\">";
+			}		
+		}
+
+		//on mouse
+		/*
+		function on_mouse(click_id)
+		{
+			var stone = document.getElementById(click_id);
+			stone.style.background-color = "#000000";
+		}
+		*/
+
+		//control event when image is clicked
+		function delete_img(click_id)
+		{
+			var row = click_id.charAt(5);
+			var num = click_id.charAt(6);
+
+			if (row_clicked == row || first_click)
+			{
+				var stone = document.getElementById(click_id);
+				stone.style.visibility = "hidden";
+
+				num_of_stones[row]--;
+				stones_left--;
+				first_click = false;
+				row_clicked = row;
+			}
+
+			is_man_turn = false;
+		}
+
+		function confirm_click()
+		{
+			if (!is_over && !is_man_turn)
+			{
+				var title_object = document.querySelector("#title_word");
+
+				//reset 
+				first_click = true;
+				row_clicked = 4;
+
+				//the computer's turn
+				show_move();
+
+				//decide result
+				if (stones_left == 0)
+				{
+					title_object.innerHTML = "你贏了！！";
+					is_over = true;
+				}
+				else if (stones_left ==1)
+				{
+					title_object.innerHTML = "你輸了！！";
+					is_over = true;
+				}
+
+				is_man_turn = true;
+			}
+		}
+
+		function show_move()
+		{
+			/*
+			test if it it in win pos
+			if (yes)
+			{
+				rand take one or two in one row
+			}
+			if (no)
+			{
+				make it in win position
+			}
+			
+			clear stones
+
+			if (special case)
+			get one stone back
+			*/
+			test_win_position();
+			console.log(num_of_stones);
+			if (is_win_position)
+				rand_take();
+			else
+			{
+				get_computer_move();
+				//fix_seven();
+			}
+			
+			var deleted = 0;
+			var stone_now = document.getElementsByTagName("img");
+
+			console.log("row:"+row_to_take);
+			console.log("num_to_take:"+num_to_take);
+			switch (row_to_take)
+			{
+				case 0:
+					for (i = 0; i < 3 && deleted != num_to_take; i++)
+					{
+						
+						if (stone_now[i].style.visibility == "hidden")
+							continue;
+						else
+						{
+							stone_now[i].style.visibility = "hidden";
+							deleted ++;
+						}	
+					}
+					break;
+				case 1:
+					for (i = 3; i < 8 && deleted != num_to_take; i++)
+					{
+						if (stone_now[i].style.visibility == "hidden")
+							continue;
+						else
+						{
+							stone_now[i].style.visibility = "hidden";
+							deleted ++;
+						}	
+					}
+					break;
+				case 2:
+					for (i = 8; i < 15 && deleted != num_to_take; i++)
+					{
+						if (stone_now[i].style.visibility == "hidden")
+							continue;
+						else
+						{
+							stone_now[i].style.visibility = "hidden";
+							deleted ++;
+						}	
+					}
+					break;
+			}
+			
+		}
+
+		//do XOR
+		function do_XOR(a, b, c)
+		{
+			return (a ^ b ^ c);
+		}
+
+		//detect whether it is in win position
+		function test_win_position()
+		{
+			if (do_XOR(num_of_stones[0], num_of_stones[1], num_of_stones[2]) == 0)
+				is_win_position = true;
+			else
+				is_win_position = false;
+		}
+
+		//if it is already in win position, random take one or two in a random row
+		function rand_take()
+		{
+			console.log("rand");
+			do
+			{
+				row_to_take = Math.floor(Math.random() * 3);
+			}while(num_of_stones[row_to_take] == 0);
+			
+
+			//can't take more if it has only one stone left
+			do
+			{
+				num_to_take = Math.floor((Math.random() * 2) + 1);
+			}while(num_of_stones[row_to_take] < num_to_take);
+
+			stones_left -= num_to_take;
+			num_of_stones[row_to_take] -= num_to_take;
+		}
+
+		
+		function get_computer_move()
+		{
+			answer_get = false;
+
+			for (i = 0;i < 3 && !answer_get; i++)
+			{
+				for (k = 1; k <= num_of_stones[i] && !answer_get; k++)
+				{
+					num_of_stones[i] -= k;
+					stones_left -= k;
+
+					//special case
+					if (stones_left == 1 || (num_of_stones[0] == 1 && num_of_stones[1] == 1 && num_of_stones[2] == 1))
+					{
+						console.log(num_of_stones[i] + k);
+						console.log("special case");
+						answer_get = true;
+						row_to_take = i;
+						num_to_take = k;
+						break;
+					}
+					else
+					{
+						num_of_stones[i] += k;
+						stones_left += k;
+					}
+				}
+			}
+
+
+			for (i = 0;i < 3 && !answer_get; i++)
+			{
+				for (k = 1; k <= num_of_stones[i] && !answer_get; k++)
+				{
+					num_of_stones[i] -= k;
+					stones_left -= k;
+
+					//fix it to win position
+					if (do_XOR(num_of_stones[0], num_of_stones[1], num_of_stones[2]) != 0)
+					{
+						num_of_stones[i] += k;
+						stones_left += k;
+					}
+					else
+					{
+						row_to_take = i;
+						num_to_take = k;
+						answer_get = true;
+					}			
+
+				}
+			}
+		}
+
+
+
+	</script>
+
+
+</html>
+
+
